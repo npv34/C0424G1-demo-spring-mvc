@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout.html}">
+<head>
+    <title>Layout Dialect Example</title>
+</head>
+<body>
+<section layout:fragment="content">
+    <div class="container">
+        <h1 class="mt-5">User List</h1>
+        <a href="/users/create">Create user</a>
+        <table class="table table-striped mt-3">
+            <thead>
+            <tr>
+                <th scope="col">STT</th>
+                <th scope="col">Name</th>
+                <th scope="col">Email</th>
+                <th scope="col">Phone</th>
+                <th scope="col">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="user : ${users}">
+                <td>1</td>
+                <td th:text="${user.getUsername()}"></td>
+                <td th:text="${user.getEmail()}"></td>
+                <td th:text="${user.getPhone()}"></td>
+                <td>
+                    <a th:href="@{/users/{id}/detail(id=${user.getId()})}">Detail</a>
+                    <a class="btn btn-danger" onclick="return confirm('Are you sure')" th:href="@{/users/{id}/delete(id=${user.getId()})}">Delete</a>
+                </td>
+
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+</body>
+</html>
