@@ -4,6 +4,9 @@ import nz.net.ultraq.thymeleaf.layoutdialect.LayoutDialect;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.util.unit.DataSize;
+import org.springframework.web.multipart.MultipartResolver;
+import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -46,14 +49,17 @@ public class WebConfig implements WebMvcConfigurer {
         return viewResolver;
     }
 
-
-    // Configure static resource handling
+    // Configure static resource handling + folder upload
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        // Serve static resources from the /static directory
-        registry.addResourceHandler("/static/**")
-                .addResourceLocations("/WEB-INF/static/");
+        registry.addResourceHandler("/resources/**")
+                .addResourceLocations("/WEB-INF/resources/");
+
     }
 
+    @Bean
+    public MultipartResolver multipartResolver() {
+        return new StandardServletMultipartResolver();
+    }
 
 }

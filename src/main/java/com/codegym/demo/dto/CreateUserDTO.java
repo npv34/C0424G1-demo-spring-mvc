@@ -1,37 +1,22 @@
-package com.codegym.demo.entities;
+package com.codegym.demo.dto;
 
-public class User {
-    private int id;
+import org.springframework.web.multipart.MultipartFile;
+
+public class CreateUserDTO {
     private String username;
     private String password;
     private String email;
     private String phone;
-    private String imageUrl;
+    private MultipartFile image;
 
-    public User() {
+    public CreateUserDTO() {
     }
 
-    public User(int id, String username, String password, String email, String phone) {
-        this.id = id;
+    public CreateUserDTO(String username, String password, String email, String phone) {
         this.username = username;
         this.password = password;
         this.email = email;
         this.phone = phone;
-    }
-
-    public User(String username, String password, String email, String phone) {
-        this.username = username;
-        this.password = password;
-        this.email = email;
-        this.phone = phone;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public String getUsername() {
@@ -66,11 +51,11 @@ public class User {
         this.phone = phone;
     }
 
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
+    public MultipartFile getImage() {
+        return image;
     }
 
-    public String getImageUrl() {
-        return imageUrl;
+    public void setImage(MultipartFile image) {
+        this.image = image;
     }
 }

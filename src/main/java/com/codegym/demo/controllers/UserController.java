@@ -1,19 +1,21 @@
 package com.codegym.demo.controllers;
 
+import com.codegym.demo.dto.CreateUserDTO;
+import com.codegym.demo.dto.EditUserDTO;
 import com.codegym.demo.entities.User;
 import com.codegym.demo.services.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @Controller
 @RequestMapping("/users")
 public class UserController {
-    private UserService userService;
+    private final UserService userService;
 
     public UserController(UserService userService) {
         this.userService = userService;
@@ -30,7 +32,9 @@ public class UserController {
     }
 
     @GetMapping("/create")
-    public String createUser() {
+    public String createUser(Model model) {
+        CreateUserDTO createUserDTO = new CreateUserDTO();
+        model.addAttribute("user", createUserDTO);
         // Logic to create a new user
         return "users/create"; // This will resolve to /WEB-INF/views/users/create.html
     }
@@ -47,6 +51,45 @@ public class UserController {
         // Logic to delete a user by ID
         userService.deleteById(id);
         // For now, just redirect to the list of users
+        return "redirect:/users";
+    }
+
+    @PostMapping("/store")
+    public String storeUser(@ModelAttribute("user") CreateUserDTO createUserDTO) throws IOException {
+        // Logic to store a new user
+        userService.storeUser(createUserDTO);
+        return "redirect:/users";
+    }
+
+    @GetMapping("/{id}/edit")
+    public String showFormEdit(@PathVariable("id") int id, Model model) {
+        User user = userService.getUserById(id);
+        if (user == null) {
+            return "redirect:/users"; // Redirect if user not found
+        }
+
+        // Prepare the EditUserDTO with the user's current details
+        EditUserDTO editUserDTO = new EditUserDTO(
+                user.getId(),
+                user.getUsername(),
+                user.getEmail(),
+                user.getPhone()
+        );
+
+        // Add the EditUserDTO to the model
+        model.addAttribute("user", editUserDTO);
+
+        return "users/edit"; // This will resolve to /WEB-INF/views/users/edit.html
+    }
+
+    @PostMapping("/{id}/update")
+    public String updateUser(@PathVariable("id") int id,
+                             @ModelAttribute("user") EditUserDTO editUserDTO) {
+        User user = userService.getUserById(id);
+        if (user == null) {
+            return "redirect:/users"; // Redirect if user not found
+        }
+        userService.updateUser(id, editUserDTO);
         return "redirect:/users";
     }
 }

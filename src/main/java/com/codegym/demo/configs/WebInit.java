@@ -1,5 +1,7 @@
 package com.codegym.demo.configs;
 
+import jakarta.servlet.MultipartConfigElement;
+import jakarta.servlet.ServletRegistration;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
 public class WebInit extends AbstractAnnotationConfigDispatcherServletInitializer {
@@ -17,5 +19,10 @@ public class WebInit extends AbstractAnnotationConfigDispatcherServletInitialize
     @Override
     protected String[] getServletMappings() {
         return new String[]{"/"}; // Map all requests to the DispatcherServlet
+    }
+
+    @Override
+    protected void customizeRegistration(ServletRegistration.Dynamic registration) {
+        registration.setMultipartConfig(new MultipartConfigElement("/tmp"));
     }
 }
