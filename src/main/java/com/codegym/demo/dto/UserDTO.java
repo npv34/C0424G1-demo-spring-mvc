@@ -1,6 +1,6 @@
-package com.codegym.demo.entities;
+package com.codegym.demo.dto;
 
-public class User {
+public class UserDTO {
     private int id;
     private String username;
     private String password;
@@ -8,10 +8,10 @@ public class User {
     private String phone;
     private String imageUrl;
 
-    public User() {
+    public UserDTO() {
     }
 
-    public User(int id, String username, String password, String email, String phone) {
+    public UserDTO(int id, String username, String password, String email, String phone) {
         this.id = id;
         this.username = username;
         this.password = password;
@@ -19,7 +19,7 @@ public class User {
         this.phone = phone;
     }
 
-    public User(String username, String password, String email, String phone) {
+    public UserDTO(String username, String password, String email, String phone) {
         this.username = username;
         this.password = password;
         this.email = email;

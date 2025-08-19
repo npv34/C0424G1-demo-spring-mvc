@@ -2,12 +2,11 @@ package com.codegym.demo.controllers;
 
 import com.codegym.demo.dto.CreateUserDTO;
 import com.codegym.demo.dto.EditUserDTO;
-import com.codegym.demo.entities.User;
+import com.codegym.demo.dto.UserDTO;
 import com.codegym.demo.services.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
@@ -25,7 +24,7 @@ public class UserController {
 
     @GetMapping
     public String listUsers(Model model) {
-        List<User> users = userService.getAllUsers();
+        List<UserDTO> users = userService.getAllUsers();
         // Logic to list users
         model.addAttribute("users", users);
         return "users/list";
@@ -53,17 +52,18 @@ public class UserController {
         // For now, just redirect to the list of users
         return "redirect:/users";
     }
-
+//
     @PostMapping("/store")
-    public String storeUser(@ModelAttribute("user") CreateUserDTO createUserDTO) throws IOException {
+    public String storeUser(@ModelAttribute("user") CreateUserDTO
+                                        createUserDTO) throws IOException {
         // Logic to store a new user
         userService.storeUser(createUserDTO);
         return "redirect:/users";
     }
-
+//
     @GetMapping("/{id}/edit")
     public String showFormEdit(@PathVariable("id") int id, Model model) {
-        User user = userService.getUserById(id);
+        UserDTO user = userService.getUserById(id);
         if (user == null) {
             return "redirect:/users"; // Redirect if user not found
         }
@@ -81,11 +81,11 @@ public class UserController {
 
         return "users/edit"; // This will resolve to /WEB-INF/views/users/edit.html
     }
-
+//
     @PostMapping("/{id}/update")
     public String updateUser(@PathVariable("id") int id,
                              @ModelAttribute("user") EditUserDTO editUserDTO) {
-        User user = userService.getUserById(id);
+        UserDTO user = userService.getUserById(id);
         if (user == null) {
             return "redirect:/users"; // Redirect if user not found
         }

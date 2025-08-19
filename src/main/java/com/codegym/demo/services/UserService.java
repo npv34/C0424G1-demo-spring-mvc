@@ -1,8 +1,10 @@
 package com.codegym.demo.services;
 
+import com.codegym.demo.dao.UserDAO;
 import com.codegym.demo.dto.CreateUserDTO;
 import com.codegym.demo.dto.EditUserDTO;
-import com.codegym.demo.entities.User;
+import com.codegym.demo.dto.UserDTO;
+import com.codegym.demo.models.User;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -14,27 +16,37 @@ import java.util.List;
 
 @Service
 public class UserService {
-    private List<User> users;
     private static final String UPLOAD_DIR = "/Users/luanpv/Desktop/demo/src/main/webapp/WEB-INF/resources/uploads";
+    private UserDAO userDAO;
 
-    public UserService(){
-        // Initialize with some dummy data
-        this.users = new ArrayList<>();
-        this.users.add( new User(1,"u1", "john_doe", "u1@gamil.com", "00898989"));
-        this.users.add( new User(2,"u2", "john_doe", "u2@gamil.com", "00898989"));
-        this.users.add( new User(3,"u3", "john_doe", "u3@gamil.com", "00898989"));
-
+    public UserService(UserDAO userDAO){
+        this.userDAO = userDAO;
     }
 
-    public List<User> getAllUsers() {
-        return users;
+    public List<UserDTO> getAllUsers() {
+        List<User> users = userDAO.findAll();
+        // map data Entity to DTO
+        List<UserDTO> userDTOs = new ArrayList<>();
+        for (User user : users) {
+            UserDTO userDTO = new UserDTO();
+            userDTO.setId(user.getId().intValue());
+            userDTO.setUsername(user.getName());
+            userDTO.setEmail(user.getEmail());
+            userDTO.setPhone(user.getPhone());
+            userDTO.setImageUrl(user.getImageUrl());
+            userDTOs.add(userDTO);
+        }
+        return userDTOs;
     }
-
+//
     public void deleteById(int id){
         // Logic to delete a user by ID
-        users.removeIf(user -> user.getId() == id);
+        User user = userDAO.findById((long) id);
+        if (user != null) {
+            userDAO.delete(user);
+        }
     }
-
+//
     public void storeUser(CreateUserDTO createUserDTO) throws IOException {
         // Logic to store a new user
         String username = createUserDTO.getUsername();
@@ -54,36 +66,40 @@ public class UserService {
         File dest = new File(UPLOAD_DIR + "/" + fileName);
         file.transferTo(dest);
 
-
-        User lastUser = users.get(users.size() - 1);
-        int newId = lastUser.getId() + 1; // Increment ID based on the last user
-
         // Create a new User object with the provided details
-        User newUser = new User(username, password, email, phone);
-        newUser.setId(newId); // Set the new ID
+        User newUser = new User();
+        newUser.setName(username);
+        newUser.setEmail(email);
+        newUser.setPassword(password);
+        newUser.setPhone(phone);
+
         newUser.setImageUrl("/resources/uploads/" + fileName); // Set the image URL
 
-        users.add(newUser); // Add the new user to the list
+        userDAO.save(newUser);
     }
-
-    public User getUserById(int id) {
-        // Logic to get a user by ID
-        for (User user : users) {
-            if (user.getId() == id) {
-                return user;
-            }
+//
+    public UserDTO getUserById(int id) {
+        User user = userDAO.findById((long) id);
+        if (user != null) {
+            UserDTO userDTO = new UserDTO();
+            userDTO.setId(user.getId().intValue());
+            userDTO.setUsername(user.getName());
+            userDTO.setEmail(user.getEmail());
+            userDTO.setPhone(user.getPhone());
+            userDTO.setImageUrl(user.getImageUrl());
+            return userDTO;
         }
-        return null; // Return null if user not found
+        return null;
     }
-
+//
     public void updateUser(int id, EditUserDTO editUserDTO) {
-        User user = getUserById(id);
+        User user = userDAO.findById((long)id);
         if (user != null) {
             // Update user details
-            user.setUsername(editUserDTO.getUsername());
+            user.setName(editUserDTO.getUsername());
             user.setEmail(editUserDTO.getEmail());
             user.setPhone(editUserDTO.getPhone());
-            // Note: Password is not updated in this method
+            userDAO.update(user);
         }
     }
 }

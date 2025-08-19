@@ -25,7 +25,7 @@
             <tr th:each="user, userStat : ${users}">
                 <td th:text="${userStat.index + 1}"></td>
                 <td th:text="${user.getUsername()}"></td>
-                <th><img width="150" th:src="${user.getImageUrl()}" alt=""></th>
+                <th><img width="150" th:src="@{${user.getImageUrl()}}" alt=""></th>
                 <td th:text="${user.getEmail()}"></td>
                 <td th:text="${user.getPhone()}"></td>
                 <td>

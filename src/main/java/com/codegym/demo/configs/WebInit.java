@@ -8,7 +8,7 @@ public class WebInit extends AbstractAnnotationConfigDispatcherServletInitialize
 
     @Override
     protected Class<?>[] getRootConfigClasses() {
-        return null; // No root context configuration
+        return new Class<?>[]{HibernateConfig.class}; //No root context configuration
     }
 
     @Override
