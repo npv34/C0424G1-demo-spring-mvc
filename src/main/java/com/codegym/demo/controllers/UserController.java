@@ -1,8 +1,10 @@
 package com.codegym.demo.controllers;
 
 import com.codegym.demo.dto.CreateUserDTO;
+import com.codegym.demo.dto.DepartmentDTO;
 import com.codegym.demo.dto.EditUserDTO;
 import com.codegym.demo.dto.UserDTO;
+import com.codegym.demo.services.DepartmentService;
 import com.codegym.demo.services.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,9 +17,11 @@ import java.util.List;
 @RequestMapping("/users")
 public class UserController {
     private final UserService userService;
+    private final DepartmentService departmentService;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService, DepartmentService departmentService) {
         this.userService = userService;
+        this.departmentService = departmentService;
     }
     // This controller can handle user-related requests
     // Add methods to handle user operations like listing, creating, updating, and deleting users
@@ -33,6 +37,8 @@ public class UserController {
     @GetMapping("/create")
     public String createUser(Model model) {
         CreateUserDTO createUserDTO = new CreateUserDTO();
+        List<DepartmentDTO> departments = departmentService.getAllDepartments();
+        model.addAttribute("departments", departments);
         model.addAttribute("user", createUserDTO);
         // Logic to create a new user
         return "users/create"; // This will resolve to /WEB-INF/views/users/create.html

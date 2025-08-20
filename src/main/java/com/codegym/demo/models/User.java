@@ -24,6 +24,11 @@ public class User {
     @Column(nullable = true)
     private String imageUrl;
 
+    // relationship with Department can be added here if needed
+    @ManyToOne
+    @JoinColumn(name = "department_id", nullable = true)
+    private Department department;
+
     public User() {
     }
 
@@ -73,5 +78,13 @@ public class User {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public void setDepartment(Department department) {
+        this.department = department;
+    }
+
+    public Department getDepartment() {
+        return department;
     }
 }

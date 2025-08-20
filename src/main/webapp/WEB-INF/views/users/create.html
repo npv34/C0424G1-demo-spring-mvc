@@ -24,6 +24,17 @@
                     <input type="file" th:field="${user.image}" class="form-control" id="image" aria-describedby="usernameHelp" name="image">
                 </div>
                 <div class="mb-3">
+                    <label for="phone" class="form-label">Phone</label>
+                    <input type="text" class="form-control" th:field="${user.phone}"  id="phone" name="phone">
+                </div>
+                <div class="mb-3">
+                    <label for="departments" class="form-label">Department</label>
+                    <select class="form-select" th:field="${user.departmentId}" id="departments" name="departmentId">
+                        <option value="" selected>Choose a department</option>
+                        <option th:each="department : ${departments}" th:value="${department.id}" th:text="${department.name}"></option>
+                    </select>
+                </div>
+                <div class="mb-3">
                     <label for="exampleInputEmail1" class="form-label">Email address</label>
                     <input type="email" th:field="${user.email}"  class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
                 </div>
@@ -31,10 +42,7 @@
                     <label for="exampleInputPassword1" class="form-label">Password</label>
                     <input type="password" th:field="${user.password}"  class="form-control" id="exampleInputPassword1">
                 </div>
-                <div class="mb-3">
-                    <label for="phone" class="form-label">Phone</label>
-                    <input type="text" class="form-control" th:field="${user.phone}"  id="phone" name="phone">
-                </div>
+
                 <button type="submit" class="btn btn-primary">Submit</button>
                 <a href="/users" class="btn btn-secondary">Back to list</a>
             </form>

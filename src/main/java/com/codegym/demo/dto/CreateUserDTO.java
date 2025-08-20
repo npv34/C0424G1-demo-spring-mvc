@@ -8,6 +8,7 @@ public class CreateUserDTO {
     private String email;
     private String phone;
     private MultipartFile image;
+    private Long departmentId;
 
     public CreateUserDTO() {
     }
@@ -57,5 +58,13 @@ public class CreateUserDTO {
 
     public void setImage(MultipartFile image) {
         this.image = image;
+    }
+
+    public Long getDepartmentId() {
+        return departmentId;
+    }
+
+    public void setDepartmentId(Long departmentId) {
+        this.departmentId = departmentId;
     }
 }

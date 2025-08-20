@@ -7,7 +7,7 @@ public class UserDTO {
     private String email;
     private String phone;
     private String imageUrl;
-
+    private String departmentName;
     public UserDTO() {
     }
 
@@ -72,5 +72,13 @@ public class UserDTO {
 
     public String getImageUrl() {
         return imageUrl;
+    }
+
+    public String getDepartmentName() {
+        return departmentName;
+    }
+
+    public void setDepartmentName(String departmentName) {
+        this.departmentName = departmentName;
     }
 }
