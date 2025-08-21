@@ -52,9 +52,12 @@ public class WebConfig implements WebMvcConfigurer {
     // Configure static resource handling + folder upload
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/resources/**")
-                .addResourceLocations("/WEB-INF/resources/");
+        registry.addResourceHandler("/resources/static/**")
+                .addResourceLocations("classpath:/WEB-INF/resources/static");
 
+        registry.addResourceHandler("/resources/uploads/**")
+                .addResourceLocations("file:" + "/Users/luanpv/Desktop/demo/uploads")
+                .setCachePeriod(0);
     }
 
     @Bean

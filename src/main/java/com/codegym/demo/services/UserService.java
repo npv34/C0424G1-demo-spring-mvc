@@ -3,32 +3,42 @@ package com.codegym.demo.services;
 import com.codegym.demo.dto.CreateUserDTO;
 import com.codegym.demo.dto.EditUserDTO;
 import com.codegym.demo.dto.UserDTO;
+import com.codegym.demo.dto.response.ListUserResponse;
 import com.codegym.demo.models.Department;
 import com.codegym.demo.models.User;
 import com.codegym.demo.repositories.IDepartmentRepository;
 import com.codegym.demo.repositories.IUserRepository;
+import com.codegym.demo.untils.FileManager;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class UserService {
-    private static final String UPLOAD_DIR = "/Users/luanpv/Desktop/demo/src/main/webapp/WEB-INF/resources/uploads";
+    private static final String UPLOAD_DIR = "/Users/luanpv/Desktop/demo/uploads";
     private final IUserRepository userRepository;
     private final IDepartmentRepository departmentRepository;
+    private final FileManager fileManager;
 
-    public UserService(IUserRepository userRepository, IDepartmentRepository departmentRepository){
+    public UserService(IUserRepository userRepository, IDepartmentRepository departmentRepository, FileManager fileManager){
         this.userRepository = userRepository;
         this.departmentRepository = departmentRepository;
+        this.fileManager = fileManager;
     }
 
-    public List<UserDTO> getAllUsers() {
-        List<User> users = userRepository.findAll();
+    public ListUserResponse getAllUsers(int pageNumber, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by("id").ascending());
+        Page<User> data = userRepository.findAll(pageable);
+        System.out.println("Total page: " + data.getTotalPages());
+        List<User> users = data.getContent();
+
         // map data Entity to DTO
         List<UserDTO> userDTOs = new ArrayList<>();
         for (User user : users) {
@@ -44,7 +54,13 @@ public class UserService {
 
             userDTOs.add(userDTO);
         }
-        return userDTOs;
+
+        ListUserResponse listUserResponse = new ListUserResponse();
+        listUserResponse.setTotalPage(data.getTotalPages());
+        listUserResponse.setCurrentPage(data.getNumber());
+        listUserResponse.setUsers(userDTOs);
+
+        return listUserResponse;
     }
 
     public void deleteById(int id){
@@ -53,12 +69,7 @@ public class UserService {
         if (user.isPresent()) {
             User currentUser = user.get();
             // delete image
-            File imageFile = new File(UPLOAD_DIR + "/" + currentUser.getImageUrl());
-            if (imageFile.exists()) {
-                imageFile.delete(); // Delete the image file
-            } else {
-                System.out.println("Image file not found: " + imageFile.getAbsolutePath());
-            }
+            fileManager.deleteFile(UPLOAD_DIR + "/" + currentUser.getImageUrl());
             userRepository.delete(currentUser);
         } else {
             throw new RuntimeException("User not found with id: " + id);
@@ -81,18 +92,9 @@ public class UserService {
 
         Long departmentId = createUserDTO.getDepartmentId();
         MultipartFile file = createUserDTO.getImage();
-        System.out.println("File: " + file);
 
         if (!file.isEmpty()) {
-            String fileName = file.getOriginalFilename();
-
-            File uploadDir = new File(UPLOAD_DIR);
-            if (!uploadDir.exists()) {
-                uploadDir.mkdirs();
-            }
-
-            File dest = new File(UPLOAD_DIR + "/" + fileName);
-            file.transferTo(dest);
+            String fileName = fileManager.uploadFile(UPLOAD_DIR, file);
             newUser.setImageUrl(fileName); // Set the image URL
         }
 
@@ -104,7 +106,7 @@ public class UserService {
         }
         userRepository.save(newUser);
     }
-//
+
     public UserDTO getUserById(int id) {
         Optional<User> user = userRepository.findById((long) id);
         if (user.isPresent()) {
@@ -115,12 +117,13 @@ public class UserService {
             userDTO.setEmail(currentUser.getEmail());
             userDTO.setPhone(currentUser.getPhone());
             userDTO.setImageUrl(currentUser.getImageUrl());
+            userDTO.setDepartmentId(currentUser.getDepartment() != null ? currentUser.getDepartment().getId() : null);
             return userDTO;
         }
         return null;
     }
 //
-    public void updateUser(int id, EditUserDTO editUserDTO) {
+    public void updateUser(int id, EditUserDTO editUserDTO) throws IOException {
         Optional<User> user = userRepository.findById((long)id);
         if (user.isPresent()) {
             // Update user details
@@ -128,6 +131,22 @@ public class UserService {
             currentUser.setName(editUserDTO.getUsername());
             currentUser.setEmail(editUserDTO.getEmail());
             currentUser.setPhone(editUserDTO.getPhone());
+
+            Long departmentId = editUserDTO.getDepartmentId();
+            if (departmentId != null) {
+                Department department = departmentRepository.findById(departmentId).orElse(null);
+                if (department != null) {
+                    currentUser.setDepartment(department);
+                }
+            }
+            MultipartFile file = editUserDTO.getImage();
+            if (!file.isEmpty()) {
+                // 1. xoa anh cu
+                fileManager.deleteFile(UPLOAD_DIR + "/" + currentUser.getImageUrl());
+                String fileName = fileManager.uploadFile(UPLOAD_DIR, file);
+                currentUser.setImageUrl(fileName); // Set the image URL
+            }
+
             userRepository.save(currentUser);
         }
     }

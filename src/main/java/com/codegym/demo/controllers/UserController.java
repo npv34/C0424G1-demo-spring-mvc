@@ -4,6 +4,7 @@ import com.codegym.demo.dto.CreateUserDTO;
 import com.codegym.demo.dto.DepartmentDTO;
 import com.codegym.demo.dto.EditUserDTO;
 import com.codegym.demo.dto.UserDTO;
+import com.codegym.demo.dto.response.ListUserResponse;
 import com.codegym.demo.services.DepartmentService;
 import com.codegym.demo.services.UserService;
 import org.springframework.stereotype.Controller;
@@ -27,10 +28,19 @@ public class UserController {
     // Add methods to handle user operations like listing, creating, updating, and deleting users
 
     @GetMapping
-    public String listUsers(Model model) {
-        List<UserDTO> users = userService.getAllUsers();
+    public String listUsers(@RequestParam(value = "page", required = false, defaultValue = "1") int page,
+                            @RequestParam(value = "size", required = false, defaultValue = "5") int size,
+                            Model model) {
+        if (page < 1) {
+            page = 1; // Ensure page number is at least 1
+        } else {
+            page -= 1; // Convert to zero-based index for pagination
+        }
+        ListUserResponse listUserResponse = userService.getAllUsers(page, size);
+        List<UserDTO> users = listUserResponse.getUsers();
         // Logic to list users
         model.addAttribute("users", users);
+        model.addAttribute("totalPages", listUserResponse.getTotalPage());
         return "users/list";
     }
 
@@ -81,16 +91,20 @@ public class UserController {
                 user.getEmail(),
                 user.getPhone()
         );
+        editUserDTO.setDepartmentId(user.getDepartmentId());
+
+        List<DepartmentDTO> departments = departmentService.getAllDepartments();
 
         // Add the EditUserDTO to the model
         model.addAttribute("user", editUserDTO);
+        model.addAttribute("departments", departments);
 
         return "users/edit"; // This will resolve to /WEB-INF/views/users/edit.html
     }
 //
     @PostMapping("/{id}/update")
     public String updateUser(@PathVariable("id") int id,
-                             @ModelAttribute("user") EditUserDTO editUserDTO) {
+                             @ModelAttribute("user") EditUserDTO editUserDTO) throws IOException {
         UserDTO user = userService.getUserById(id);
         if (user == null) {
             return "redirect:/users"; // Redirect if user not found
