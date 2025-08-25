@@ -9,6 +9,8 @@ import com.codegym.demo.services.DepartmentService;
 import com.codegym.demo.services.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -69,9 +71,14 @@ public class UserController {
         return "redirect:/users";
     }
 //
-    @PostMapping("/store")
-    public String storeUser(@ModelAttribute("user") CreateUserDTO
-                                        createUserDTO) throws IOException {
+    @PostMapping("/create")
+    public String storeUser(@Validated @ModelAttribute("user") CreateUserDTO
+                                        createUserDTO, BindingResult result, Model model ) throws IOException {
+        if (result.hasErrors()){
+            List<DepartmentDTO> departments = departmentService.getAllDepartments();
+            model.addAttribute("departments", departments);
+            return "users/create";
+        }
         // Logic to store a new user
         userService.storeUser(createUserDTO);
         return "redirect:/users";
