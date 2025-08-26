@@ -27,7 +27,9 @@ public class UserService {
     private final IDepartmentRepository departmentRepository;
     private final FileManager fileManager;
 
-    public UserService(IUserRepository userRepository, IDepartmentRepository departmentRepository, FileManager fileManager){
+    public UserService(IUserRepository userRepository,
+                       IDepartmentRepository departmentRepository,
+                       FileManager fileManager){
         this.userRepository = userRepository;
         this.departmentRepository = departmentRepository;
         this.fileManager = fileManager;
@@ -76,7 +78,7 @@ public class UserService {
         }
     }
 
-    public void storeUser(CreateUserDTO createUserDTO) throws IOException {
+    public void storeUser(CreateUserDTO createUserDTO) {
         // Logic to store a new user
         String username = createUserDTO.getUsername();
         String password = createUserDTO.getPassword();
@@ -123,7 +125,7 @@ public class UserService {
         return null;
     }
 //
-    public void updateUser(int id, EditUserDTO editUserDTO) throws IOException {
+    public void updateUser(int id, EditUserDTO editUserDTO) {
         Optional<User> user = userRepository.findById((long)id);
         if (user.isPresent()) {
             // Update user details

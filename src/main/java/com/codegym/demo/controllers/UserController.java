@@ -7,6 +7,8 @@ import com.codegym.demo.dto.UserDTO;
 import com.codegym.demo.dto.response.ListUserResponse;
 import com.codegym.demo.services.DepartmentService;
 import com.codegym.demo.services.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -65,12 +67,15 @@ public class UserController {
 
     @GetMapping("/{id}/delete")
     public String deleteUser(@PathVariable("id") int id) {
-        // Logic to delete a user by ID
         userService.deleteById(id);
-        // For now, just redirect to the list of users
         return "redirect:/users";
     }
-//
+
+    @ExceptionHandler(RuntimeException.class)
+    public String handlerRuntimeException(){
+        return "errors/500";
+    }
+
     @PostMapping("/create")
     public String storeUser(@Validated @ModelAttribute("user") CreateUserDTO
                                         createUserDTO, BindingResult result, Model model ) throws IOException {
@@ -88,7 +93,7 @@ public class UserController {
     public String showFormEdit(@PathVariable("id") int id, Model model) {
         UserDTO user = userService.getUserById(id);
         if (user == null) {
-            return "redirect:/users"; // Redirect if user not found
+            return "errors/404"; // Redirect if user not found
         }
 
         // Prepare the EditUserDTO with the user's current details
@@ -114,7 +119,7 @@ public class UserController {
                              @ModelAttribute("user") EditUserDTO editUserDTO) throws IOException {
         UserDTO user = userService.getUserById(id);
         if (user == null) {
-            return "redirect:/users"; // Redirect if user not found
+            return "errors/404";
         }
         userService.updateUser(id, editUserDTO);
         return "redirect:/users";
