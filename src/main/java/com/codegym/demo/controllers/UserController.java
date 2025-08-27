@@ -7,6 +7,9 @@ import com.codegym.demo.dto.UserDTO;
 import com.codegym.demo.dto.response.ListUserResponse;
 import com.codegym.demo.services.DepartmentService;
 import com.codegym.demo.services.UserService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -23,28 +26,44 @@ import java.util.List;
 public class UserController {
     private final UserService userService;
     private final DepartmentService departmentService;
+    private final HttpSession httpSession;
 
-    public UserController(UserService userService, DepartmentService departmentService) {
+    public UserController(UserService userService, DepartmentService departmentService, HttpSession httpSession) {
         this.userService = userService;
         this.departmentService = departmentService;
+        this.httpSession = httpSession;
     }
     // This controller can handle user-related requests
     // Add methods to handle user operations like listing, creating, updating, and deleting users
 
     @GetMapping
-    public String listUsers(@RequestParam(value = "page", required = false, defaultValue = "1") int page,
+    public String listUsers(@CookieValue(value = "counter", defaultValue = "1") String counter,
+                            @RequestParam(value = "page", required = false, defaultValue = "1") int page,
                             @RequestParam(value = "size", required = false, defaultValue = "5") int size,
-                            Model model) {
+                            Model model,
+                            HttpServletResponse response) {
         if (page < 1) {
             page = 1; // Ensure page number is at least 1
         } else {
             page -= 1; // Convert to zero-based index for pagination
         }
+        Cookie myCookie = new Cookie("msg", "Hello");
+
+        int total = Integer.parseInt(counter) + 1;
+
+        Cookie counterViewPage = new Cookie("counter", total + "");
+        myCookie.setMaxAge(60);
+        counterViewPage.setMaxAge(60);
+        response.addCookie(myCookie);
+        response.addCookie(counterViewPage);
+
         ListUserResponse listUserResponse = userService.getAllUsers(page, size);
         List<UserDTO> users = listUserResponse.getUsers();
         // Logic to list users
+        String username = (String) httpSession.getAttribute("username");
         model.addAttribute("users", users);
         model.addAttribute("totalPages", listUserResponse.getTotalPage());
+        model.addAttribute("totalViewPage", counter);
         return "users/list";
     }
 

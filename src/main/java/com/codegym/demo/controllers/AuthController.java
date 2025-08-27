@@ -1,6 +1,7 @@
 package com.codegym.demo.controllers;
 
 import com.codegym.demo.services.AuthService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,9 +14,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class AuthController {
 
     private final AuthService authService;
+    private final HttpSession httpSession;
 
-    public AuthController(AuthService authService) {
+    public AuthController(AuthService authService,
+                          HttpSession httpSession) {
         this.authService = authService;
+        this.httpSession = httpSession;
     }
 
 
@@ -35,6 +39,9 @@ public class AuthController {
         if (!authService.checkAccount(username, password)) {
             return "redirect:/auth/login?error=true";
         }
+
+        // tao session luu thong tin dang nhap
+        httpSession.setAttribute("username", "admin");
         return "redirect:/home";
 
     }
