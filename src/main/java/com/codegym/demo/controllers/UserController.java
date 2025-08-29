@@ -5,6 +5,7 @@ import com.codegym.demo.dto.DepartmentDTO;
 import com.codegym.demo.dto.EditUserDTO;
 import com.codegym.demo.dto.UserDTO;
 import com.codegym.demo.dto.response.ListUserResponse;
+import com.codegym.demo.dto.response.ListUserSearchResponse;
 import com.codegym.demo.services.DepartmentService;
 import com.codegym.demo.services.UserService;
 import jakarta.servlet.http.Cookie;
@@ -12,6 +13,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -142,5 +145,11 @@ public class UserController {
         }
         userService.updateUser(id, editUserDTO);
         return "redirect:/users";
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<ListUserSearchResponse> search(@RequestParam("keyword") String keyword) {
+        ListUserSearchResponse res = userService.searchByName(keyword);
+        return new ResponseEntity<>(res, HttpStatus.OK);
     }
 }
