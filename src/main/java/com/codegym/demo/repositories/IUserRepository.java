@@ -14,4 +14,6 @@ public interface IUserRepository extends PagingAndSortingRepository<User , Long>
     void save(User user);
     boolean existsByEmail(String email);
     List<User> findUserByNameContaining(String name);
+    Optional<User> findByName(String name);
+    Optional<User> findByEmail(String email);
 }

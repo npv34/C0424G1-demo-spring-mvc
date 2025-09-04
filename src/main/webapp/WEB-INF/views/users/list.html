@@ -127,8 +127,12 @@
                           <td th:text="${user.getPhone()}"></td>
                           <td th:text="${user.getDepartmentName()}"></td>
                           <td>
-                              <a class="btn btn-danger" onclick="return confirm('Are you sure')" th:href="@{/users/{id}/delete(id=${user.getId()})}" th:text="#{delete}"></a>
-                              <a class="btn btn-primary" th:href="@{/users/{id}/edit(id=${user.getId()})}" th:text="#{edit}">Edit</a>
+                              <a class="btn btn-danger" onclick="return confirm('Are you sure')" th:href="@{/users/{id}/delete(id=${user.getId()})}">
+                                  <i class="fa-solid fa-trash"></i>
+                              </a>
+                              <a class="btn btn-primary" th:href="@{/users/{id}/edit(id=${user.getId()})}">
+                                  <i class="fa-solid fa-pen-to-square"></i>
+                              </a>
                           </td>
                       </tr>
                       </tbody>

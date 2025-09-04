@@ -43,11 +43,13 @@ $(document).ready(function () {
             html += `<td>${item.departmentName}</td>`
             html += `
                 <td>
-                              <a class="btn btn-danger" onclick="return confirm('Are you sure')" th:href="@{/users/{id}/delete(id=${item.id})}">Delete</a>
-                              <a class="btn btn-primary" th:href="@{/users/{id}/edit(id=${item.id})}">Edit</a>
-                          </td>
-            
-            `
+                    <a class="btn btn-danger" onclick="return confirm('Are you sure')" th:href="@{/users/{id}/delete(id=${item.id})}">
+                       <i class="fa-solid fa-trash"></i>
+                    </a>
+                    <a class="btn btn-primary" th:href="@{/users/{id}/edit(id=${item.id})}">
+                        <i class="fa-solid fa-pen-to-square"></i>
+                    </a>
+                </td>`
             html += '<tr>';
         })
 
@@ -72,7 +74,6 @@ function renderOptionLang(currentLang) {
 function getCookie(name) {
     const nameEQ = name + "=";
     const ca = document.cookie.split(';'); // Split all cookies into an array
-
     for (let i = 0; i < ca.length; i++) {
         let c = ca[i];
         while (c.charAt(0) === ' ') { // Remove leading spaces
