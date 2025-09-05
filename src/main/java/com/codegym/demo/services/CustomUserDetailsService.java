@@ -2,12 +2,14 @@ package com.codegym.demo.services;
 
 import com.codegym.demo.models.User;
 import com.codegym.demo.repositories.IUserRepository;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -22,17 +24,19 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<User> user = this.userRepository.findByEmail(username);
-        if (user.isEmpty()) {
-            throw new UsernameNotFoundException("User not found");
-        }
+        User user = userRepository.findByEmail(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-        User userLogin = user.get();
+        var authorities = user.getRoles().stream()
+                .map(r -> new SimpleGrantedAuthority(
+                        r.getName().startsWith("ROLE_") ? r.getName() : "ROLE_" + r.getName()
+                ))
+                .collect(Collectors.toList());
 
         return new org.springframework.security.core.userdetails.User(
-                userLogin.getEmail(),
-                userLogin.getPassword(),
-                userLogin.getRoles().stream().map(role -> new SimpleGrantedAuthority(role.getName())).collect(Collectors.toList())
+                user.getEmail(),
+                user.getPassword(),   // phải là BCrypt
+                authorities
         );
     }
 }

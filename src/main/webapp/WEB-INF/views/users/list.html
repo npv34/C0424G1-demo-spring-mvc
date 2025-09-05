@@ -90,7 +90,7 @@
        <div class="card">
               <div class="card-header d-flex justify-content-between">
                   <h3 th:text="#{userList}"></h3>
-                  <a class="btn btn-success" href="/users/create" th:text="#{createUser}"></a>
+                  <a class="btn btn-success" th:href="@{/admin/users/create}" th:text="#{createUser}"></a>
               </div>
               <div class="card-body">
                   <div class="justify-content-between d-flex">
@@ -127,10 +127,10 @@
                           <td th:text="${user.getPhone()}"></td>
                           <td th:text="${user.getDepartmentName()}"></td>
                           <td>
-                              <a class="btn btn-danger" onclick="return confirm('Are you sure')" th:href="@{/users/{id}/delete(id=${user.getId()})}">
+                              <a class="btn btn-danger" onclick="return confirm('Are you sure')" th:href="@{/admin/users/{id}/delete(id=${user.getId()})}">
                                   <i class="fa-solid fa-trash"></i>
                               </a>
-                              <a class="btn btn-primary" th:href="@{/users/{id}/edit(id=${user.getId()})}">
+                              <a class="btn btn-primary" th:href="@{/admin/users/{id}/edit(id=${user.getId()})}">
                                   <i class="fa-solid fa-pen-to-square"></i>
                               </a>
                           </td>
