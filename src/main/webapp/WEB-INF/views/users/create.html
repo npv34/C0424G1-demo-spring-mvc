@@ -14,7 +14,7 @@
             Create user
         </div>
         <div class="card-body">
-            <form th:object="${user}" class="form" th:action="@{/users/create}" method="post" enctype="multipart/form-data">
+            <form th:object="${user}" class="form" th:action="@{/admin/users/create}" method="post" enctype="multipart/form-data">
                 <div class="mb-3">
                     <label for="username" class="form-label">Username</label>
                     <input type="text" th:field="*{username}" th:class="${#fields.hasErrors('username') ? 'form-control is-invalid' : 'form-control'}" id="username" aria-describedby="usernameHelp" name="username" required>
@@ -54,9 +54,17 @@
                         <span th:errors="*{password}"></span>
                     </div>
                 </div>
+                <div class="mb-3">
+                    <label  class="form-label">Role</label>
+                    <div th:each="role : ${roles}" class="form-check">
+                        <input class="form-check-input" name="role_id" type="checkbox" th:value="${role.id}" th:id="${role.id}">
+                        <label class="form-check-label" th:for="${role.id}" th:text="${role.name}">
+                        </label>
+                    </div>
+                </div>
 
                 <button type="submit" class="btn btn-primary">Submit</button>
-                <a href="/users" class="btn btn-secondary">Back to list</a>
+                <a href="/admin/users" class="btn btn-secondary">Back to list</a>
             </form>
         </div>
     </div>

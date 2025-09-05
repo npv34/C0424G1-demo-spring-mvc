@@ -14,7 +14,7 @@ $(document).ready(function () {
     $("#input-search-user").keyup(function () {
         const value = $(this).val();
         $.ajax({
-            url: "/users/search",
+            url: "/admin/users/search",
             method: "GET",
             data: {
                 keyword: value

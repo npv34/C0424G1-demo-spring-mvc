@@ -28,13 +28,16 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/resources/**").permitAll()
-                        .requestMatchers("/**").hasRole("ADMIN")
+                        .requestMatchers("/resources/**", "/auth/login").permitAll()
+                        .requestMatchers("/admin/**").hasAnyRole("ADMIN", "USER")
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
                         .loginPage("/auth/login")
-                        .defaultSuccessUrl("/users")
+                        .loginProcessingUrl("/auth/login")
+                        .usernameParameter("email")             // nếu bạn dùng email thay vì username
+                        .passwordParameter("password")
+                        .defaultSuccessUrl("/admin/users", true)
                         .failureUrl("/auth/login?error")   // khi sai tài khoản/mật khẩu
                         .permitAll())
                 .logout(logout -> logout.permitAll());
