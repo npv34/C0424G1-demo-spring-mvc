@@ -1,5 +1,7 @@
 package com.codegym.demo.dto;
 
+import java.util.List;
+
 public class UserDTO {
     private int id;
     private String username;
@@ -9,6 +11,7 @@ public class UserDTO {
     private String imageUrl;
     private String departmentName;
     private Long departmentId;
+    private List<String> nameRoles;
 
     public UserDTO() {
     }
@@ -91,4 +94,13 @@ public class UserDTO {
     public void setDepartmentId(Long departmentId) {
         this.departmentId = departmentId;
     }
+
+    public List<String> getNameRoles() {
+        return nameRoles;
+    }
+
+    public void setNameRoles(List<String> nameRoles) {
+        this.nameRoles = nameRoles;
+    }
+
 }
