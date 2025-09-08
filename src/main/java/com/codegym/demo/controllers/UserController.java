@@ -100,25 +100,27 @@ public class UserController {
     @GetMapping("/{id}/delete")
     public String deleteUser(@PathVariable("id") int id) {
         userService.deleteById(id);
-        return "redirect:/users";
+        return "redirect:/admin/users";
     }
 
-    @ExceptionHandler(RuntimeException.class)
-    public String handlerRuntimeException(){
-        return "errors/500";
-    }
+//    @ExceptionHandler(RuntimeException.class)
+//    public String handlerRuntimeException(){
+//        return "errors/500";
+//    }
 
     @PostMapping("/create")
     public String storeUser(@Validated @ModelAttribute("user") CreateUserDTO
                                         createUserDTO, BindingResult result, Model model ) throws IOException {
         if (result.hasErrors()){
             List<DepartmentDTO> departments = departmentService.getAllDepartments();
+            List<RoleDTO> roles = roleService.getAllRoles();
             model.addAttribute("departments", departments);
+            model.addAttribute("roles", roles);
             return "users/create";
         }
         // Logic to store a new user
         userService.storeUser(createUserDTO);
-        return "redirect:/users";
+        return "redirect:/admin/users";
     }
 //
     @GetMapping("/{id}/edit")
@@ -154,7 +156,7 @@ public class UserController {
             return "errors/404";
         }
         userService.updateUser(id, editUserDTO);
-        return "redirect:/users";
+        return "redirect:/admin/users";
     }
 
     @GetMapping("/search")

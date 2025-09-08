@@ -4,13 +4,14 @@ import com.codegym.demo.validations.custom.UniqueEmail;
 import jakarta.validation.constraints.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 public class CreateUserDTO {
     @NotBlank(message = "Username is required")
     private String username;
 
     @NotBlank(message = "Password is required")
-    @Min(value = 6, message = "Password must be at least 6 characters long")
-    @Max(value = 32, message = "Password must not exceed 20 characters")
+    @Size(min = 6, max = 32, message = "Password must be between 6 and 32 characters")
     private String password;
 
     @NotBlank(message = "Email is required")
@@ -24,6 +25,10 @@ public class CreateUserDTO {
     private MultipartFile image;
 
     private Long departmentId;
+
+    // Nhận checkbox roleIds
+    @NotEmpty(message="Phải chọn ít nhất 1 role")
+    private List<Long> roleIds;
 
     public CreateUserDTO() {
     }
@@ -81,5 +86,13 @@ public class CreateUserDTO {
 
     public void setDepartmentId(Long departmentId) {
         this.departmentId = departmentId;
+    }
+
+    public @NotEmpty(message = "Phải chọn ít nhất 1 role") List<Long> getRoleIds() {
+        return roleIds;
+    }
+
+    public void setRoleIds(@NotEmpty(message = "Phải chọn ít nhất 1 role") List<Long> roleIds) {
+        this.roleIds = roleIds;
     }
 }
